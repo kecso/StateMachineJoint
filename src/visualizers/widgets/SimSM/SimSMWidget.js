@@ -29,8 +29,16 @@ define(['jointjs', 'css!./styles/SimSMWidget.css'], function (joint) {
         // set widget class
         this._el.addClass(WIDGET_CLASS);
 
-        // Create a dummy header
-        this._el.append('<h3>SimSM Events:</h3>');
+        this._jointSM = new joint.dia.Graph;
+        this._jointPaper = new joint.dia.Paper({
+            el: this._el,
+            width : width,
+            height: height,
+            model: this._jointSM,
+            interactive: false
+        });
+
+        this._webgmeSM = null;
 
         // Registering to events can be done with jQuery (as normal)
         /*this._el.on('dblclick', function (event) {
@@ -46,7 +54,96 @@ define(['jointjs', 'css!./styles/SimSMWidget.css'], function (joint) {
 
     // State Machine manipulating functions called from the controller
     SimSMWidget.prototype.initMachine = function (machineDescriptor) {
+        const self = this;
         console.log(machineDescriptor);
+
+        self._webgmeSM = machineDescriptor;
+        self._webgmeSM.current = self._webgmeSM.init;
+        const sm = self._webgmeSM;
+        // first add the states
+        Object.keys(sm.states).forEach(stateId => {
+            let vertex = null;
+            if (sm.init === stateId) {
+                vertex = new joint.shapes.standard.Circle({
+                    position: sm.states[stateId].position,
+                    size: { width: 20, height: 20 },
+                    attrs: {
+                        body: {
+                            fill: '#333333'
+                        }
+                    }
+                });
+            } else if (sm.states[stateId].isEnd) {
+                vertex = new joint.shapes.standard.Circle({
+                    position: sm.states[stateId].position,
+                    size: { width: 30, height: 30 },
+                    attrs: {
+                        body: {
+                            fill: '#999999'
+                        }
+                    }
+                });
+            } else {
+                vertex = new joint.shapes.standard.Circle({
+                    position: sm.states[stateId].position,
+                    size: { width: 60, height: 60 },
+                    attrs: {
+                        label : {
+                            text: sm.states[stateId].name,
+                            //event: 'element:label:pointerdown',
+                            fontWeight: 'bold',
+                            //cursor: 'text',
+                            //style: {
+                            //    userSelect: 'text'
+                            //}
+                        },
+                        body: {
+                            strokeWidth: 3
+                        }
+                    }
+                });
+            }
+            vertex.addTo(self._jointSM);
+            sm.states[stateId].joint = vertex;
+        });
+
+        // then create the links
+        Object.keys(sm.states).forEach(stateId => {
+            const state = sm.states[stateId];
+            Object.keys(state.next).forEach(event => {
+                state.jointNext = state.jointNext || {};
+                const link = new joint.shapes.standard.Link({
+                    source: {id: state.joint.id},
+                    target: {id: sm.states[state.next[event]].joint.id},
+                    attrs: {
+                        line: {
+                            strokeWidth: 2
+                        }
+                    },
+                    labels: [{
+                        position: {
+                            distance: 0.5,
+                            offset: 0,
+                            args: {
+                                keepGradient: true,
+                                ensureLegibility: true
+                            }
+                        },
+                        attrs: {
+                            text: {
+                                text: event,
+                                fontWeight: 'bold'
+                            }
+                        }
+                    }]
+                });
+                link.addTo(self._jointSM);
+                state.jointNext[event] = link;
+            })
+        });
+
+        //now refresh the visualization
+        self._jointPaper.updateViews();
     };
 
     SimSMWidget.prototype.destroyMachine = function () {
