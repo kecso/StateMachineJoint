@@ -1,0 +1,8 @@
+[
+  {
+    "id": "SimSM",
+    "title": "SimSM",
+    "panel": "panels/SimSM/SimSMPanel",
+    "DEBUG_ONLY": false
+  }
+]
