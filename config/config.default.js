@@ -9,6 +9,10 @@ var config = require('./config.webgme'),
 
 config.seedProjects.defaultProject = 'StateMachine';
 
+//allowing python plugin execution
+config.plugin.allowServerExecution = true;
+
+// Paths needed for proper jointjs import on the client side
 config.requirejsPaths['jointjs'] = './node_modules/jointjs/dist/joint.min';
 config.requirejsPaths['lodash'] = './node_modules/lodash/lodash.min';
 
