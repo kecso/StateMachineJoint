@@ -28,7 +28,12 @@ define([
 
         this._networkRootLoaded = false;
 
+        this._fireableEvents = null;
+
         this._initWidgetEventHandlers();
+
+        // we need to fix the context of this function as it will be called from the widget directly
+        this.setFireableEvents = this.setFireableEvents.bind(this);
 
         this._logger.debug('ctor finished');
     }
@@ -136,6 +141,7 @@ define([
                 sm.states[elementId] = state;
             }
         });
+        sm.setFireableEvents = this.setFireableEvents;
 
         self._widget.initMachine(sm);
     };
@@ -146,6 +152,27 @@ define([
         self._widget.destroyMachine();
     };
 
+    SimSMControl.prototype.setFireableEvents = function (events) {
+        this._fireableEvents = events;
+        if (events && events.length > 1) {
+            // we need to fill the dropdow button with options
+            this.$btnEventSelector.clear();
+            events.forEach(event => {
+                this.$btnEventSelector.addButton({
+                    text: event,
+                    title: 'fire event: '+ event,
+                    data: {event: event},
+                    clickFn: data => {
+                        this._widget.fireEvent(data.event);
+                    }
+                });
+            });
+        } else if (events && events.length === 0) {
+            this._fireableEvents = null;
+        }
+
+        this._displayToolbarItems();
+    };
 
     /* * * * * * * * Visualizer life cycle callbacks * * * * * * * */
     SimSMControl.prototype.destroy = function () {
@@ -182,6 +209,14 @@ define([
         if (this._toolbarInitialized === true) {
             for (var i = this._toolbarItems.length; i--;) {
                 this._toolbarItems[i].show();
+            }
+            if (this._fireableEvents === null) {
+                this.$btnEventSelector.hide();
+                this.$btnSingleEvent.hide();
+            } else if (this._fireableEvents.length == 1) {
+                this.$btnEventSelector.hide();
+            } else {
+                this.$btnSingleEvent.hide();
             }
         } else {
             this._initializeToolbar();
@@ -223,6 +258,33 @@ define([
             }
         });
         this._toolbarItems.push(this.$btnReachCheck);
+
+        this.$btnResetMachine = toolBar.addButton({
+            title: 'Reset simulator',
+            icon: 'glyphicon glyphicon-fast-backward',
+            clickFn: function (/*data*/) {
+                self._widget.resetMachine();
+            }
+        });
+        this._toolbarItems.push(this.$btnResetMachine);
+
+        // when there are multiple events to choose from we offer a selector
+        this.$btnEventSelector = toolBar.addDropDownButton({
+            text: 'event'
+        });
+        this._toolbarItems.push(this.$btnEventSelector);
+        this.$btnEventSelector.hide();
+
+        // if there is only one event we just show a play button
+        this.$btnSingleEvent = toolBar.addButton({
+            title: 'Fire event',
+            icon: 'glyphicon glyphicon-play',
+            clickFn: function (/*data*/) {
+                self._widget.fireEvent(self._fireableEvents[0]);
+            }
+        });
+        this._toolbarItems.push(this.$btnSingleEvent);
+        
 
         /************** Dropdown for event progression *******************/
 

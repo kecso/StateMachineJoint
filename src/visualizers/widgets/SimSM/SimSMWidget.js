@@ -59,6 +59,7 @@ define(['jointjs', 'css!./styles/SimSMWidget.css'], function (joint) {
 
         self._webgmeSM = machineDescriptor;
         self._webgmeSM.current = self._webgmeSM.init;
+        self._jointSM.clear();
         const sm = self._webgmeSM;
         // first add the states
         Object.keys(sm.states).forEach(stateId => {
@@ -144,11 +145,39 @@ define(['jointjs', 'css!./styles/SimSMWidget.css'], function (joint) {
 
         //now refresh the visualization
         self._jointPaper.updateViews();
+        self._decorateMachine();
     };
 
     SimSMWidget.prototype.destroyMachine = function () {
 
     };
+
+    SimSMWidget.prototype.fireEvent = function (event) {
+        const self = this;
+        const current = self._webgmeSM.states[self._webgmeSM.current];
+        const link = current.jointNext[event];
+        const linkView = link.findView(self._jointPaper);
+        linkView.sendToken(joint.V('circle', { r: 10, fill: 'black' }), {duration:500}, function() {
+           self._webgmeSM.current = current.next[event];
+           self._decorateMachine();
+        });
+
+
+    };
+
+    SimSMWidget.prototype.resetMachine = function () {
+        this._webgmeSM.current = this._webgmeSM.init;
+        this._decorateMachine();
+    }
+
+    SimSMWidget.prototype._decorateMachine = function() {
+        const sm = this._webgmeSM;
+        Object.keys(sm.states).forEach(stateId => {
+            sm.states[stateId].joint.attr('body/stroke', '#333333');
+        });
+        sm.states[sm.current].joint.attr('body/stroke', 'blue');
+        sm.setFireableEvents(Object.keys(sm.states[sm.current].next));
+    }
     
 
     /* * * * * * * * Visualizer event handlers * * * * * * * */
