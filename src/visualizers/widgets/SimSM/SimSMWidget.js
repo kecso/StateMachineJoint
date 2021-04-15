@@ -38,14 +38,17 @@ define(['jointjs', 'css!./styles/SimSMWidget.css'], function (joint) {
             interactive: false
         });
 
-        this._webgmeSM = null;
+        // add event calls to elements
+        this._jointPaper.on('element:pointerdblclick', function(elementView) {
+            const currentElement = elementView.model;
+            // console.log(currentElement);
+            if (self._webgmeSM) {
+                // console.log(self._webgmeSM.id2state[currentElement.id]);
+                self._setCurrentState(self._webgmeSM.id2state[currentElement.id]);
+            }
+        });
 
-        // Registering to events can be done with jQuery (as normal)
-        /*this._el.on('dblclick', function (event) {
-            event.stopPropagation();
-            event.preventDefault();
-            self.onBackgroundDblClick();
-        });*/
+        this._webgmeSM = null;
     };
 
     SimSMWidget.prototype.onWidgetContainerResize = function (width, height) {
@@ -61,6 +64,7 @@ define(['jointjs', 'css!./styles/SimSMWidget.css'], function (joint) {
         self._webgmeSM.current = self._webgmeSM.init;
         self._jointSM.clear();
         const sm = self._webgmeSM;
+        sm.id2state = {}; // this dictionary will connect the on-screen id to the state id
         // first add the states
         Object.keys(sm.states).forEach(stateId => {
             let vertex = null;
@@ -106,6 +110,7 @@ define(['jointjs', 'css!./styles/SimSMWidget.css'], function (joint) {
             }
             vertex.addTo(self._jointSM);
             sm.states[stateId].joint = vertex;
+            sm.id2state[vertex.id] = stateId;
         });
 
         // then create the links
@@ -168,7 +173,7 @@ define(['jointjs', 'css!./styles/SimSMWidget.css'], function (joint) {
     SimSMWidget.prototype.resetMachine = function () {
         this._webgmeSM.current = this._webgmeSM.init;
         this._decorateMachine();
-    }
+    };
 
     SimSMWidget.prototype._decorateMachine = function() {
         const sm = this._webgmeSM;
@@ -177,7 +182,12 @@ define(['jointjs', 'css!./styles/SimSMWidget.css'], function (joint) {
         });
         sm.states[sm.current].joint.attr('body/stroke', 'blue');
         sm.setFireableEvents(Object.keys(sm.states[sm.current].next));
-    }
+    };
+
+    SimSMWidget.prototype._setCurrentState = function(newCurrent) {
+        this._webgmeSM.current = newCurrent;
+        this._decorateMachine();
+    };
     
 
     /* * * * * * * * Visualizer event handlers * * * * * * * */
