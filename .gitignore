@@ -35,3 +35,6 @@ blob-local-storage/
 
 # Package-lock
 package-lock.json
+
+# any python compiles
+*.pyc

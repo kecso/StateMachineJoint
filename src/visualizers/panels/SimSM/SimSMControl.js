@@ -254,7 +254,17 @@ define([
             title: 'Check state machine reachability properties',
             icon: 'glyphicon glyphicon-question-sign',
             clickFn: function (/*data*/) {
-                console.log('we need to call our plugin');
+                const context = self._client.getCurrentPluginContext('ReachCheck',self._currentNodeId, []);
+                // !!! it is important to fill out or pass an empty object as the plugin config otherwise we might get errors...
+                context.pluginConfig = {};
+                self._client.runServerPlugin(
+                    'ReachCheck', 
+                    context, 
+                    function(err, result){
+                        // here comes any additional processing of results or potential errors.
+                        console.log('plugin err:', err);
+                        console.log('plugin result:', result);
+                });
             }
         });
         this._toolbarItems.push(this.$btnReachCheck);
