@@ -74,7 +74,8 @@ define(['jointjs', 'css!./styles/SimSMWidget.css'], function (joint) {
                     size: { width: 20, height: 20 },
                     attrs: {
                         body: {
-                            fill: '#333333'
+                            fill: '#333333',
+                            cursor: 'pointer'
                         }
                     }
                 });
@@ -84,7 +85,8 @@ define(['jointjs', 'css!./styles/SimSMWidget.css'], function (joint) {
                     size: { width: 30, height: 30 },
                     attrs: {
                         body: {
-                            fill: '#999999'
+                            fill: '#999999',
+                            cursor: 'pointer'
                         }
                     }
                 });
@@ -103,7 +105,8 @@ define(['jointjs', 'css!./styles/SimSMWidget.css'], function (joint) {
                             //}
                         },
                         body: {
-                            strokeWidth: 3
+                            strokeWidth: 3,
+                            cursor: 'pointer'
                         }
                     }
                 });
@@ -124,6 +127,9 @@ define(['jointjs', 'css!./styles/SimSMWidget.css'], function (joint) {
                     attrs: {
                         line: {
                             strokeWidth: 2
+                        },
+                        wrapper: {
+                            cursor: 'default'
                         }
                     },
                     labels: [{

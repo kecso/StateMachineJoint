@@ -25,7 +25,7 @@ define([
     const path = require('path');
     // Modify these as needed..
     const START_PORT = 5555;
-    const COMMAND = 'python';
+    const COMMAND = 'python3';
     const SCRIPT_FILE = path.join(path.dirname(module.uri), 'run_plugin.py');
 
     /**
