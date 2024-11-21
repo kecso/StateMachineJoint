@@ -11,8 +11,8 @@
 FROM node:20.18.1-alpine3.20
 # on top of node we need Python
 RUN apk update
-RUN apk add --no-cache make g++ git python3 py3-pip py3-setuptools dotnet6-sdk pythonispython3
-RUN pip3 install --break-system-packages webgme-bindings lark
+RUN apk add --no-cache make g++ git python3 py3-pip py3-setuptools dotnet6-sdk pythonispython3 graphviz
+RUN pip3 install --break-system-packages webgme-bindings lark graphviz
 
 # just creating the directories where our webgme server will run
 RUN mkdir /usr/app

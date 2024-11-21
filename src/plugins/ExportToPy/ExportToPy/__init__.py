@@ -22,7 +22,6 @@ domainCode = open(os.path.join(dirpath,'domainSM.py'), 'r').read()
 class ExportToPy(PluginBase):
     def main(self):
         core = self.core
-        root_node = self.root_node
         active_node = self.active_node
         META = self.META
 

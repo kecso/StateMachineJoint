@@ -4,5 +4,11 @@
     "title": "SimSM",
     "panel": "panels/SimSM/SimSMPanel",
     "DEBUG_ONLY": false
+  },
+  {
+    "id": "SmToSVG",
+    "title": "SmToSVG",
+    "panel": "panels/SmToSVG/SmToSVGPanel",
+    "DEBUG_ONLY": false
   }
 ]
