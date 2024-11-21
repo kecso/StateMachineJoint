@@ -13,17 +13,33 @@
       "ReachCheck": {
         "src": "src/plugins/ReachCheck",
         "test": "test/plugins/ReachCheck"
+      },
+      "ImportFromPy": {
+        "src": "src/plugins/ImportFromPy",
+        "test": "test/plugins/ImportFromPy"
+      },
+      "ExportToPy": {
+        "src": "src/plugins/ExportToPy",
+        "test": "test/plugins/ExportToPy"
       }
     },
     "seeds": {
       "StateMachine": {
         "src": "src/seeds/StateMachine"
       }
-    }
+    },
+    "addons": {},
+    "decorators": {},
+    "layouts": {},
+    "routers": {}
   },
   "dependencies": {
     "visualizers": {},
     "plugins": {},
-    "seeds": {}
+    "seeds": {},
+    "addons": {},
+    "decorators": {},
+    "layouts": {},
+    "routers": {}
   }
 }

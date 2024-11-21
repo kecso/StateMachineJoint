@@ -8,19 +8,11 @@
 
 
 # Node 14
-FROM node:fermium
-MAINTAINER Tamas Kecskes <tamas.kecskes@vanderbilt.edu>
+FROM node:20.18.1-alpine3.20
 # on top of node we need Python
-RUN apt-get update && \
-    apt-get install -y git\
-        apt-transport-https \
-        python \
-        python-pip \
-        python3-pip \
-        python-setuptools
-# we also need the latest webgme-bindings to be able to run python plugins
-RUN pip install webgme_bindings
-RUN pip3 install webgme-bindings
+RUN apk update
+RUN apk add --no-cache make g++ git python3 py3-pip py3-setuptools dotnet6-sdk pythonispython3
+RUN pip3 install --break-system-packages webgme-bindings lark
 
 # just creating the directories where our webgme server will run
 RUN mkdir /usr/app
